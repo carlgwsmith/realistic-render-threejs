@@ -6,7 +6,7 @@ import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader'
 
 // Loaders
 const gltfLoader = new GLTFLoader()
-
+const cubeTextureLoader = new THREE.CubeTextureLoader()
 
 
 /**
@@ -21,14 +21,18 @@ const canvas = document.querySelector('canvas.webgl')
 // Scene
 const scene = new THREE.Scene()
 
-/**
- * Test sphere
- */
-const testSphere = new THREE.Mesh(
-    new THREE.SphereGeometry(1, 32, 32),
-    new THREE.MeshStandardMaterial()
-)
-scene.add(testSphere)
+//environment map
+const environmentMap = cubeTextureLoader.load([
+    '/textures/environmentMaps/0/px.jpg',
+    '/textures/environmentMaps/0/nx.jpg',
+    '/textures/environmentMaps/0/py.jpg',
+    '/textures/environmentMaps/0/ny.jpg',
+    '/textures/environmentMaps/0/pz.jpg',
+    '/textures/environmentMaps/0/nz.jpg'
+])
+
+//apply env map to background
+scene.background = environmentMap
 
 //Models
 gltfLoader.load('/models/FlightHelmet/glTF/FlightHelmet.gltf', (gltf)=>{
