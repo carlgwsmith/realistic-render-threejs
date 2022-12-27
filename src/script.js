@@ -14,12 +14,23 @@ const cubeTextureLoader = new THREE.CubeTextureLoader()
  */
 // Debug
 const gui = new dat.GUI()
+const debugObject = {}
 
 // Canvas
 const canvas = document.querySelector('canvas.webgl')
 
 // Scene
 const scene = new THREE.Scene()
+
+//update all materials
+const updateAllMaterials = () =>{
+    scene.traverse((child)=>{
+        if(child instanceof THREE.Mesh && child.material instanceof THREE.MeshStandardMaterial){
+            // child.material.envMap = environmentMap
+            child.material.envMapIntensity = debugObject.envMapIntensity
+        }
+    })
+}
 
 //environment map
 const environmentMap = cubeTextureLoader.load([
@@ -33,6 +44,15 @@ const environmentMap = cubeTextureLoader.load([
 
 //apply env map to background
 scene.background = environmentMap
+//apply env map to all materials
+scene.environment = environmentMap
+
+debugObject.envMapIntensity = 5
+gui.add(debugObject, 'envMapIntensity').min(0).max(10).step(.001).onChange(()=>{
+    updateAllMaterials()
+})
+
+
 
 //Models
 gltfLoader.load('/models/FlightHelmet/glTF/FlightHelmet.gltf', (gltf)=>{
@@ -42,6 +62,7 @@ gltfLoader.load('/models/FlightHelmet/glTF/FlightHelmet.gltf', (gltf)=>{
     scene.add(gltf.scene)
 
     gui.add(gltf.scene.rotation, 'y').min(-Math.PI).max(Math.PI).step(.001).name('rotation')
+    updateAllMaterials()
 })
 
 //light
